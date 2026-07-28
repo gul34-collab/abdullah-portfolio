@@ -30,3 +30,33 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     }
   });
 });
+
+// ===== Scroll-triggered block reveal animations =====
+const revealEls = document.querySelectorAll('.reveal');
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('in-view');
+
+      // If a skill card just revealed, animate its progress bar too
+      const bar = entry.target.querySelector('.bar');
+      if (bar) {
+        const targetWidth = bar.style.width;
+        bar.style.width = '0';
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            bar.style.width = targetWidth;
+          }, 150);
+        });
+      }
+
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, {
+  threshold: 0.15,
+  rootMargin: '0px 0px -40px 0px'
+});
+
+revealEls.forEach(el => revealObserver.observe(el));
