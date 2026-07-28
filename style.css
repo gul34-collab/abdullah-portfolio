@@ -70,6 +70,180 @@ body {
   }
 }
 
+/* ===== Preloader ===== */
+body.is-loading {
+  overflow: hidden;
+}
+
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  background: var(--bg);
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+.preloader.loaded {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.preloader-mark {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.5px;
+  animation: preloaderPulse 1.4s ease-in-out infinite;
+}
+
+.preloader-mark span {
+  color: var(--primary);
+}
+
+@keyframes preloaderPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(0.96); }
+}
+
+.preloader-bar {
+  width: 160px;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.preloader-bar-fill {
+  height: 100%;
+  width: 40%;
+  border-radius: 4px;
+  background: var(--gradient);
+  animation: preloaderSlide 1.1s ease-in-out infinite;
+}
+
+@keyframes preloaderSlide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(350%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .preloader-mark,
+  .preloader-bar-fill {
+    animation: none;
+  }
+}
+
+/* ===== Custom cursor ===== */
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  border-radius: 50%;
+  z-index: 2500;
+  transform: translate(-50%, -50%);
+}
+
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--primary);
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.15s ease;
+}
+
+.cursor-ring {
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid var(--primary);
+  opacity: 0;
+  transition: opacity 0.3s, width 0.25s ease, height 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+}
+
+.cursor-dot.active,
+.cursor-ring.active {
+  opacity: 1;
+}
+
+.cursor-ring.hovering {
+  width: 56px;
+  height: 56px;
+  background: rgba(99, 102, 241, 0.08);
+  border-color: var(--primary-hover);
+}
+
+@media (hover: none), (pointer: coarse) {
+  .cursor-dot,
+  .cursor-ring {
+    display: none;
+  }
+}
+
+/* ===== Hero image aura ===== */
+.image-aura {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-aura::before {
+  content: '';
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, #6366f1, #a855f7, #6366f1);
+  opacity: 0.55;
+  filter: blur(6px);
+  animation: auraSpin 6s linear infinite;
+}
+
+.image-aura::after {
+  content: '';
+  position: absolute;
+  inset: -28px;
+  border-radius: 50%;
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  animation: auraPulse 3s ease-in-out infinite;
+}
+
+@keyframes auraSpin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes auraPulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.08); opacity: 0.15; }
+}
+
+.image-aura .image-placeholder {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 900px) {
+  .image-aura {
+    width: 260px;
+    height: 260px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .image-aura::before,
+  .image-aura::after {
+    animation: none;
+  }
+}
+
 /* ===== Scroll-reveal system ===== */
 .reveal {
   opacity: 0;

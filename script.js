@@ -60,3 +60,66 @@ const revealObserver = new IntersectionObserver((entries) => {
 });
 
 revealEls.forEach(el => revealObserver.observe(el));
+
+// ===== Preloader =====
+const preloader = document.getElementById('preloader');
+document.body.classList.add('is-loading');
+
+const MIN_PRELOAD_TIME = 1400; // ms — guarantees the loading screen is actually seen
+const startTime = Date.now();
+
+function hidePreloader() {
+  const elapsed = Date.now() - startTime;
+  const remaining = Math.max(MIN_PRELOAD_TIME - elapsed, 0);
+  setTimeout(() => {
+    preloader.classList.add('loaded');
+    document.body.classList.remove('is-loading');
+  }, remaining);
+}
+
+if (document.readyState === 'complete') {
+  hidePreloader();
+} else {
+  window.addEventListener('load', hidePreloader);
+}
+
+// ===== Custom cursor =====
+const cursorDot = document.getElementById('cursorDot');
+const cursorRing = document.getElementById('cursorRing');
+const isTouchDevice = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+
+if (!isTouchDevice && cursorDot && cursorRing) {
+  let mouseX = 0, mouseY = 0;
+  let ringX = 0, ringY = 0;
+
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    cursorDot.style.left = `${mouseX}px`;
+    cursorDot.style.top = `${mouseY}px`;
+    cursorDot.classList.add('active');
+    cursorRing.classList.add('active');
+  });
+
+  document.addEventListener('mouseleave', () => {
+    cursorDot.classList.remove('active');
+    cursorRing.classList.remove('active');
+  });
+
+  // Smooth trailing ring
+  function animateRing() {
+    ringX += (mouseX - ringX) * 0.15;
+    ringY += (mouseY - ringY) * 0.15;
+    cursorRing.style.left = `${ringX}px`;
+    cursorRing.style.top = `${ringY}px`;
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  // Grow the ring on interactive elements
+  const hoverTargets = document.querySelectorAll('a, button, .skill-card, .project-card, input, textarea');
+  hoverTargets.forEach(el => {
+    el.addEventListener('mouseenter', () => cursorRing.classList.add('hovering'));
+    el.addEventListener('mouseleave', () => cursorRing.classList.remove('hovering'));
+  });
+}
